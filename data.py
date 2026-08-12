@@ -280,3 +280,116 @@ TEXTOS = {
     "temperatura": "Ambiente",
     "fluido_padrao": "Diesel",
 }
+
+# ==================== IMAGENS DOS PRODUTOS ====================
+# Estrutura de pastas:
+#   imagens_produtos/tanques/   → fotos dos tanques
+#   imagens_produtos/bacias/    → fotos das bacias
+#   imagens_produtos/bombas/    → fotos das bombas
+#   imagens_produtos/filtros/   → fotos dos filtros
+# Formatos: PNG ou JPG. Troque as fotos quando tiver as reais.
+
+IMAGEM_PADRAO_TANQUE = "imagens_produtos/tanques/tanque_horizontal_1.png"
+IMAGEM_PADRAO_BACIA = "imagens_produtos/bacias/bacia_padrao.png"
+IMAGEM_PADRAO_BOMBA = "imagens_produtos/bombas/bomba_padrao.png"
+IMAGEM_PADRAO_FILTRO = "imagens_produtos/filtros/filtro_padrao.png"
+
+# --- Tanques por volume ---
+IMAGEM_POR_TANQUE = {
+    "1.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "3.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "4.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "5.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "6.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "7.500L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "10.000L": "imagens_produtos/tanques/tanque_horizontal_1.png",
+    "12.000L": "imagens_produtos/tanques/tanque_horizontal_2.png",
+    "14.900L": "imagens_produtos/tanques/tanque_horizontal_2.png",
+    "20.000L": "imagens_produtos/tanques/tanque_bacia_1.png",
+    "30.000L": "imagens_produtos/tanques/tanque_bacia_2.png",
+    "BIPARTIDO 14.950L": "imagens_produtos/tanques/tanque_horizontal_2.png",
+}
+
+# --- Bacias por volume ---
+IMAGEM_POR_BACIA = {
+    "SEM BACIA": None,
+    "1.000L": "imagens_produtos/bacias/bacia_padrao.png",
+    "3.000L": "imagens_produtos/bacias/bacia_padrao.png",
+    "4.000L": "imagens_produtos/bacias/bacia_padrao.png",
+    "5.000L": "imagens_produtos/bacias/bacia_padrao.png",
+    "6.000L": "imagens_produtos/bacias/bacia_padrao.png",
+    "7.500L": "imagens_produtos/bacias/bacia_padrao.png",
+    "10.000L": "imagens_produtos/bacias/bacia_com_tanque.png",
+    "12.000L": "imagens_produtos/bacias/bacia_com_tanque.png",
+    "15.000L": "imagens_produtos/bacias/bacia_com_tanque.png",
+    "20.000L": "imagens_produtos/bacias/bacia_com_tanque.png",
+    "30.000L": "imagens_produtos/bacias/bacia_com_tanque.png",
+}
+
+# --- Bombas (por nome do produto) ---
+IMAGEM_POR_BOMBA = {
+    "SEM BOMBA": None,
+    # Todas usam a mesma foto por enquanto — troque quando tiver fotos específicas
+    "BOMBA ABASTECIMENTO 60LPM - 220V": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO GILBARCO 45LPM - ELETRÔNICA SIMPLES": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO GILBARCO 45LPM - ELETRÔNICA DUPLA": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO GILBARCO 110LPM - ELETRÔNICA ANTI-EXPLOSÃO": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO WAYNE 3G 50LPM - ELETRÔNICA SIMPLES": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO WAYNE 3G 50LPM - ELETRÔNICA DUPLA": "imagens_produtos/bombas/bomba_padrao.png",
+    "BOMBA ABASTECIMENTO WAYNE GLOBAL 50LPM - ELETRÔNICA DUPLA": "imagens_produtos/bombas/bomba_padrao.png",
+    "INDUSTRIAL MECÂNICA 90 LPM - DIESEL": "imagens_produtos/bombas/bomba_padrao.png",
+    "INDUSTRIAL MECÂNICA ANTI-EXPLOSÃO 90LPM": "imagens_produtos/bombas/bomba_padrao.png",
+    "SKID ABASTECIMENTO TRIF. 60LPM": "imagens_produtos/bombas/bomba_padrao.png",
+    "SKID ABASTECIMENTO TRIF. 60LPM DUPLA FILTRAGEM": "imagens_produtos/bombas/bomba_padrao.png",
+}
+
+# --- Filtros ---
+IMAGEM_POR_FILTRO = {
+    "SEM FILTRO": None,
+    "FOGUETINHO DESIDATRADOR 60LPM": "imagens_produtos/filtros/filtro_padrao.png",
+    "FOGUETINHO DESIDATRADOR 100LPM": "imagens_produtos/filtros/filtro_padrao.png",
+    "FOGUETINHO DESIDATRADOR 150LPM": "imagens_produtos/filtros/filtro_padrao.png",
+    "FOGUETINHO COALESCENTE 100LPM": "imagens_produtos/filtros/filtro_padrao.png",
+    "FOGUETINHO DESIDATRADOR DUPLO 100LPM": "imagens_produtos/filtros/filtro_padrao.png",
+}
+
+
+def get_imagem_tanque(tanque_key: str):
+    """Caminho da foto do tanque (ou padrão)."""
+    return IMAGEM_POR_TANQUE.get(tanque_key, IMAGEM_PADRAO_TANQUE)
+
+
+def get_imagem_bacia(bacia_key: str):
+    """Caminho da foto da bacia (None se SEM BACIA)."""
+    return IMAGEM_POR_BACIA.get(bacia_key, IMAGEM_PADRAO_BACIA)
+
+
+def get_imagem_bomba(bomba_key: str):
+    """Caminho da foto da bomba (None se SEM BOMBA)."""
+    return IMAGEM_POR_BOMBA.get(bomba_key, IMAGEM_PADRAO_BOMBA)
+
+
+def get_imagem_filtro(filtro_key: str):
+    """Caminho da foto do filtro (None se SEM FILTRO)."""
+    return IMAGEM_POR_FILTRO.get(filtro_key, IMAGEM_PADRAO_FILTRO)
+
+
+def get_imagens_selecionadas(tanque_key: str, bacia_key: str, bomba_key: str, filtro_key: str):
+    """
+    Retorna lista de (titulo, caminho) das imagens dos produtos selecionados.
+    Usado no preview da tela e no PDF.
+    """
+    imgs = []
+    t = get_imagem_tanque(tanque_key)
+    if t:
+        imgs.append(("Tanque " + tanque_key, t))
+    b = get_imagem_bacia(bacia_key)
+    if b:
+        imgs.append(("Bacia " + bacia_key, b))
+    bo = get_imagem_bomba(bomba_key)
+    if bo:
+        imgs.append((bomba_key[:40], bo))
+    f = get_imagem_filtro(filtro_key)
+    if f:
+        imgs.append((filtro_key[:40], f))
+    return imgs

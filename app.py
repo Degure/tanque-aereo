@@ -9,7 +9,8 @@ from typing import List
 
 from data import (
     TANQUES, BACIAS, BOMBAS, FILTROS, ELEMENTOS,
-    EMPRESA, VENDEDORES_INICIAL
+    EMPRESA, VENDEDORES_INICIAL,
+    get_imagem_tanque, get_imagens_selecionadas,
 )
 from pdf_generator import gerar_pdf, format_brl
 
@@ -167,6 +168,20 @@ with col_e:
         step=10.0,
         key=f"p_elem_{elemento_key}",
     )
+
+# Preview das imagens de todos os produtos selecionados (tanque, bacia, bomba, filtro)
+st.markdown("**Imagens dos produtos selecionados**")
+imagens_sel = get_imagens_selecionadas(tanque_key, bacia_key, bomba_key, filtro_key)
+imagens_existentes = [(titulo, path) for titulo, path in imagens_sel if path and os.path.exists(path)]
+
+if imagens_existentes:
+    cols_img = st.columns(min(len(imagens_existentes), 4))
+    for idx, (titulo, path) in enumerate(imagens_existentes):
+        with cols_img[idx % len(cols_img)]:
+            st.image(path, use_container_width=True, caption=titulo)
+    st.caption("* Imagens meramente ilustrativas – GP Company · entram no PDF da proposta")
+else:
+    st.caption("Nenhuma imagem encontrada. Coloque fotos em `imagens_produtos/tanques|bacias|bombas|filtros/`.")
 
 # Itens extras manuais
 st.markdown("**Itens adicionais (opcional)**")
@@ -336,8 +351,12 @@ dados_pdf = {
     "total_geral": total_geral if frete_valor > 0 else total_avista,
     "tanque_key": tanque_key,
     "bacia_key": bacia_key,
+    "bomba_key": bomba_key,
+    "filtro_key": filtro_key,
     "fluido": fluido,
     "obs": obs_gerais,
+    "imagem_produto": get_imagem_tanque(tanque_key),
+    "imagens": get_imagens_selecionadas(tanque_key, bacia_key, bomba_key, filtro_key),
 }
 
 col_btn1, col_btn2 = st.columns([1, 3])
