@@ -38,6 +38,90 @@ def format_brl(valor: float) -> str:
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def _imagem_responsiva(path: str, max_w: float, max_h: float):
+    """
+    Carrega imagem e dimensiona mantendo proporção dentro de max_w x max_h.
+    Retorna objeto Image do ReportLab ou None se falhar.
+    """
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        from PIL import Image as PILImage
+        with PILImage.open(path) as pil_im:
+            iw, ih = pil_im.size
+        if iw <= 0 or ih <= 0:
+            return None
+        ratio = min(max_w / iw, max_h / ih)
+        return Image(path, width=iw * ratio, height=ih * ratio)
+    except Exception:
+        return None
+
+
+def _grade_imagens(imagens: list, styles, max_total_width: float = 180 * mm, max_h: float = 42 * mm):
+    """
+    Monta uma grade adaptativa de imagens (1 a 4 itens).
+    - 1 imagem: larga e centralizada
+    - 2 imagens: lado a lado
+    - 3–4 imagens: grid proporcional
+    Retorna lista de flowables ou lista vazia.
+    """
+    from PIL import Image as PILImage
+
+    validas = [(t, p) for t, p in imagens if p and os.path.exists(p)]
+    if not validas:
+        return []
+
+    n = min(len(validas), 4)
+    validas = validas[:n]
+    gap = 3 * mm
+    cell_w = (max_total_width - gap * (n - 1)) / n
+
+    cells = []
+    for titulo, path in validas:
+        img = _imagem_responsiva(path, cell_w - 2 * mm, max_h)
+        if img is None:
+            continue
+        legenda = Paragraph(
+            f"<font size='6.5'><b>{titulo[:32]}</b></font>",
+            styles["CorpoPequeno"],
+        )
+        cell = Table([[img], [legenda]], colWidths=[cell_w])
+        cell.setStyle(TableStyle([
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("VALIGN", (0, 0), (0, 0), "MIDDLE"),
+            ("VALIGN", (0, 1), (0, 1), "TOP"),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ("LEFTPADDING", (0, 0), (-1, -1), 2),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 2),
+        ]))
+        cells.append(cell)
+
+    if not cells:
+        return []
+
+    # Completa células vazias para manter alinhamento visual se quiser 4 colunas fixas
+    # Aqui usamos exatamente o número de imagens para layout mais limpo
+    col_widths = [cell_w] * len(cells)
+    row = Table([cells], colWidths=col_widths)
+    row.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("BOX", (0, 0), (-1, -1), 0.5, CINZA_BORDA),
+        ("BACKGROUND", (0, 0), (-1, -1), CINZA_CLARO),
+        ("LEFTPADDING", (0, 0), (-1, -1), 2),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 2),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
+
+    nota = Paragraph(
+        "<i>* Imagens meramente ilustrativas – equipamentos GP Company</i>",
+        styles["CorpoPequeno"],
+    )
+    return [row, Spacer(1, 2 * mm), nota, Spacer(1, 3 * mm)]
+
+
 def criar_estilos():
     styles = getSampleStyleSheet()
 
@@ -268,7 +352,24 @@ def gerar_pdf(dados: Dict[str, Any], modo: str = "completa") -> bytes:
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
     ]))
     story.append(t_cli)
-    story.append(Spacer(1, 5*mm))
+    story.append(Spacer(1, 4*mm))
+
+    # ========== IMAGENS RESPONSIVAS DOS PRODUTOS ==========
+    if modo != "condicoes":
+        from data import get_imagens_selecionadas
+
+        imagens = dados.get("imagens")
+        if not imagens:
+            imagens = get_imagens_selecionadas(
+                dados.get("tanque_key", "10.000L"),
+                dados.get("bacia_key", "SEM BACIA"),
+                dados.get("bomba_key", "SEM BOMBA"),
+                dados.get("filtro_key", "SEM FILTRO"),
+            )
+
+        # Grade adapta automaticamente: 1, 2, 3 ou 4 colunas
+        for flowable in _grade_imagens(imagens, styles):
+            story.append(flowable)
 
     # ========== ITENS / VALORES (exceto modo condições) ==========
     if modo != "condicoes":
