@@ -108,7 +108,14 @@ with col_t:
     )
     tinfo = TANQUES[tanque_key]
     st.caption(f"Ø {tinfo['diametro']} · Comp. {tinfo['comprimento']} · Chapa {tinfo['chapa']} · {tinfo['peso']} kg")
-    preco_tanque = st.number_input("Preço Tanque (R$)", value=float(tinfo["preco"]), min_value=0.0, step=10.0, key="p_tanque")
+    # key muda com a seleção → preço atualiza automaticamente
+    preco_tanque = st.number_input(
+        "Preço Tanque (R$)",
+        value=float(tinfo["preco"]),
+        min_value=0.0,
+        step=10.0,
+        key=f"p_tanque_{tanque_key}",
+    )
 
 with col_b:
     bacia_key = st.selectbox(
@@ -121,21 +128,45 @@ with col_b:
         st.caption(f"L {binfo['largura']} · A {binfo['altura']} · C {binfo['comprimento']} · {binfo['peso']} kg")
     else:
         st.caption("Sem bacia de contenção")
-    preco_bacia = st.number_input("Preço Bacia (R$)", value=float(binfo["preco"]), min_value=0.0, step=10.0, key="p_bacia")
+    preco_bacia = st.number_input(
+        "Preço Bacia (R$)",
+        value=float(binfo["preco"]),
+        min_value=0.0,
+        step=10.0,
+        key=f"p_bacia_{bacia_key}",
+    )
 
 col_bo, col_f, col_e = st.columns(3)
 
 with col_bo:
     bomba_key = st.selectbox("Bomba de Abastecimento", options=list(BOMBAS.keys()), index=0)
-    preco_bomba = st.number_input("Preço Bomba (R$)", value=float(BOMBAS[bomba_key]), min_value=0.0, step=10.0, key="p_bomba")
+    preco_bomba = st.number_input(
+        "Preço Bomba (R$)",
+        value=float(BOMBAS[bomba_key]),
+        min_value=0.0,
+        step=10.0,
+        key=f"p_bomba_{bomba_key}",
+    )
 
 with col_f:
     filtro_key = st.selectbox("Filtro", options=list(FILTROS.keys()), index=0)
-    preco_filtro = st.number_input("Preço Filtro (R$)", value=float(FILTROS[filtro_key]), min_value=0.0, step=10.0, key="p_filtro")
+    preco_filtro = st.number_input(
+        "Preço Filtro (R$)",
+        value=float(FILTROS[filtro_key]),
+        min_value=0.0,
+        step=10.0,
+        key=f"p_filtro_{filtro_key}",
+    )
 
 with col_e:
     elemento_key = st.selectbox("Elemento Filtrante", options=list(ELEMENTOS.keys()), index=0)
-    preco_elemento = st.number_input("Preço Elemento (R$)", value=float(ELEMENTOS[elemento_key]), min_value=0.0, step=10.0, key="p_elem")
+    preco_elemento = st.number_input(
+        "Preço Elemento (R$)",
+        value=float(ELEMENTOS[elemento_key]),
+        min_value=0.0,
+        step=10.0,
+        key=f"p_elem_{elemento_key}",
+    )
 
 # Itens extras manuais
 st.markdown("**Itens adicionais (opcional)**")
